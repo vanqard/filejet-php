@@ -93,7 +93,7 @@ form.addEventListener('submit', event => {
 
 When you upload file with public accessibility eg. you will use `FileJet\Messages\UploadRequest::PUBLIC` while fetching upload format you can access your files via FileJet CDN. This method will generate the publicly accessible link for your files based on your configuration.
 
-Method accepts only argument the object which describes your file. You can use this method with `FileJet\File` object which implements `FileJet\FileInterface`. The object contains file identifier provided by `uploadFile()` method. If you are trying to get link for image you can optionally provide mutation string ([see documentation](https://github.com/filejet/filejet-php/mutators.md)). For SEO purposes you can provide the optional third argument which will append the file URL with your custom name.
+Method accepts only argument the object which describes your file. You can use this method with `FileJet\File` object which implements `FileJet\FileInterface`. The object contains file identifier provided by `uploadFile()` method. If you are trying to get link for image you can optionally provide mutation string ([see documentation](https://github.com/filejet/filejet-php/blob/master/mutators.md)). For SEO purposes you can provide the optional third argument which will append the file URL with your custom name.
 
 ```php
 $reportUrl = $fileJet->getUrl(
