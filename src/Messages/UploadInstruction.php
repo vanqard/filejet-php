@@ -11,18 +11,18 @@ final class UploadInstruction
     /** @var string */
     private $identifier;
     /** @var UploadFormat */
-    private $storageRequest;
+    private $uploadFormat;
 
     public function __construct(ResponseInterface $response)
     {
         $data = json_decode($response->getBody()->getContents(), true);
-        $uploadFormat = $data['uploadFormat'];
+        $uploadFormatData = $data['uploadFormat'];
 
         $this->identifier = $data['id'];
-        $this->storageRequest = new UploadFormat(
-            $uploadFormat['url'],
-            $uploadFormat['httpMethod'],
-            $uploadFormat['headers']
+        $this->uploadFormat = new UploadFormat(
+            $uploadFormatData['url'],
+            $uploadFormatData['httpMethod'],
+            $uploadFormatData['headers']
         );
     }
 
@@ -31,8 +31,8 @@ final class UploadInstruction
         return $this->identifier;
     }
 
-    public function getStorageRequest(): UploadFormat
+    public function getUploadFormat(): UploadFormat
     {
-        return $this->storageRequest;
+        return $this->uploadFormat;
     }
 }
