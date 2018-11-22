@@ -68,14 +68,15 @@ $httpClient->sendRequest(
 For better performance we recommend upload files via JavaScript by fetching the upload format from FileJet API via your backend and provide these information to the frontend. Then you can simply use `fetch`.
 
 ```html
-<form action="#">
-    <input type="file" name="file">
+<form action="#" id="form">
+    <input type="file" name="file" id="file">
     <button type="submit">Upload</button>
 </form>
 ```
 
 ```javascript
-const form = document.querySelector('form');
+const form = document.getElementById('form');
+const input = document.getElementById('file');
 
 form.addEventListener('submit', event => {
     event.preventDefault();
@@ -84,7 +85,7 @@ form.addEventListener('submit', event => {
     fetch(uploadFormat.uri, {
         method: uploadFormat.requestMethod,
         headers: uploadFormat.headers,
-        body: new FormData(form)
+        body: input.files[0]
     })
 });
 ```
