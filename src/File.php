@@ -13,7 +13,7 @@ final class File implements FileInterface
     /** @var null|string */
     private $customName;
 
-    public function __construct(string $identifier, ?string $mutation, ?string $customName)
+    public function __construct(string $identifier, string $mutation = null, string $customName = null)
     {
         $this->identifier = $identifier;
         $this->mutation = $mutation;
