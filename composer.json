@@ -22,5 +22,8 @@
         "php-http/message": "^1.0",
         "guzzlehttp/psr7": "^1.0",
         "phpunit/phpunit": "^7.0"
+    },
+    "suggest": {
+        "php-http/guzzle6-adapter": "HTTP client implementation which can be used with HTTPlug",
     }
 }
