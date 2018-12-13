@@ -19,7 +19,8 @@ You need Storage ID and API key to be able to communicate with FileJet API. You 
 FileJet PHP library internally calls FileJet API via HttpClient. We have used for our implementation [HTTPlug](http://docs.php-http.org/en/latest/httplug/introduction.html) project so you can use any HTTP client you want. You can easily use it with `php-http/guzzle6-adapter` by installing it via Composer (see below) or you can follow [HTTPlug tutorial](http://docs.php-http.org/en/latest/httplug/tutorial.html) for registering any HTTP client you choose.
 
 ```bash
-composer require php-http/guzzle6-adapter
+composer require php-http/guzzle6-adapter ^1.1
+composer require php-http/message ^1.6
 ```
 
 Setup your service:
