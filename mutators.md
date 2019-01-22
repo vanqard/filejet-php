@@ -170,3 +170,9 @@ Examples:
 ```
 resize_100x100,q_80
 ```
+
+## Auto optimization mode
+
+Enables intelligent auto optimizations for your mutated images.
+
+To enable this functionality, you can provide `auto` mutator.

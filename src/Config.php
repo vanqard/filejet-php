@@ -10,11 +10,14 @@ class Config
     private $apiKey;
     /** @var string */
     private $storageId;
+    /** @var bool */
+    private $autoMode;
 
-    public function __construct(string $apiKey, string $storageId)
+    public function __construct(string $apiKey, string $storageId, bool $autoMode = true)
     {
         $this->apiKey = $apiKey;
         $this->storageId = $storageId;
+        $this->autoMode = $autoMode;
     }
 
     public function getApiKey(): string
@@ -25,6 +28,11 @@ class Config
     public function getStorageId(): string
     {
         return $this->storageId;
+    }
+
+    public function isAutoMode(): bool
+    {
+        return $this->autoMode;
     }
 
     public function getStorageManagerUrl(): string

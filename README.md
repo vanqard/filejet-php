@@ -28,10 +28,11 @@ Setup your service:
 ```php
 $apiKey = 'your api key';
 $storageId = 'your storage id';
+$autoMode = true;
 
 $fileJet = new FileJet\FileJet(
     new FileJet\HttpClient(),
-    new FileJet\Config($apiKey, $storageId)
+    new FileJet\Config($apiKey, $storageId, $autoMode)
 );
 ```
 
@@ -133,3 +134,12 @@ $url = $downloadInstruction->getUrl();
 ### `deleteFile(string $fileId): void`
 
 This method will delete file from FileJet. The only argument is file identifier obtained from `uploadFile()` method.
+
+
+## Auto optimization mode
+
+You can use our intelligent auto optimization mode by simply activate it globally by setting a third argument of  `FileJet\Config` to `true`. This will append every public URL with `auto` mutation which is responsible for providing most optimized version of your image to your clients.
+
+If you don't want to use auto mode globally you can append at any time to your images by simply providing `auto` mutation string.
+
+If you are using auto optimization mode globally and you for any reason want to disable it for specific images, you can disable it per image by providing `auto=false` mutation.

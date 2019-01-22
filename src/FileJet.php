@@ -25,6 +25,10 @@ final class FileJet
     {
         $url = "{$this->config->getPublicUrl()}/{$this->config->getStorageId()}/{$this->normalizeId($file->getIdentifier())}";
 
+        if ($this->config->isAutoMode() && $this->autoIsDisabled($file)) {
+            $file = new File($file->getIdentifier(), $file->getMutation() ? "{$file->getMutation()},auto" : 'auto', $file->getCustomName());
+        }
+
         if ($file->getMutation() !== null) {
             $url = "{$url}/{$file->getMutation()}";
         }
@@ -72,8 +76,13 @@ final class FileJet
         );
     }
 
-    private function normalizeId(string $fileId): string {
+    private function normalizeId(string $fileId): string
+    {
         return preg_replace('/[^a-z0-9]/', 'x', strtolower($fileId));
     }
-}
 
+    private function autoIsDisabled(FileInterface $file): bool
+    {
+        return strpos($file->getMutation() || '', 'auto=false') === false;
+    }
+}
