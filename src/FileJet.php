@@ -83,6 +83,6 @@ final class FileJet
 
     private function autoIsDisabled(FileInterface $file): bool
     {
-        return strpos($file->getMutation() || '', 'auto=false') === false;
+        return strpos($file->getMutation() ?? '', 'auto=false') === false;
     }
 }
