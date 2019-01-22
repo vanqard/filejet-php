@@ -10,14 +10,11 @@ final class File implements FileInterface
     private $identifier;
     /** @var null|string */
     private $mutation;
-    /** @var null|string */
-    private $customName;
 
-    public function __construct(string $identifier, string $mutation = null, string $customName = null)
+    public function __construct(string $identifier, string $mutation = null)
     {
         $this->identifier = $identifier;
         $this->mutation = $mutation;
-        $this->customName = $customName;
     }
 
     public function getIdentifier(): string
@@ -28,10 +25,5 @@ final class File implements FileInterface
     public function getMutation(): ?string
     {
         return $this->mutation;
-    }
-
-    public function getCustomName(): ?string 
-    {
-        return $this->customName;
     }
 }

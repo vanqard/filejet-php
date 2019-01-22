@@ -26,15 +26,11 @@ final class FileJet
         $url = "{$this->config->getPublicUrl()}/{$this->config->getStorageId()}/{$this->normalizeId($file->getIdentifier())}";
 
         if ($this->config->isAutoMode() && $this->autoIsDisabled($file)) {
-            $file = new File($file->getIdentifier(), $file->getMutation() ? "{$file->getMutation()},auto" : 'auto', $file->getCustomName());
+            $file = new File($file->getIdentifier(), $this->toAutoMutation($file));
         }
 
         if ($file->getMutation() !== null) {
             $url = "{$url}/{$file->getMutation()}";
-        }
-
-        if ($file->getCustomName() !== null) {
-            $url = "{$url}/{$file->getCustomName()}";
         }
 
         return $url;
@@ -84,5 +80,10 @@ final class FileJet
     private function autoIsDisabled(FileInterface $file): bool
     {
         return strpos($file->getMutation() ?? '', 'auto=false') === false;
+    }
+
+    private function toAutoMutation(FileInterface $file): string
+    {
+        return $file->getMutation() ? "{$file->getMutation()},auto" : 'auto';
     }
 }
