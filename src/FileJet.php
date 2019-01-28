@@ -25,8 +25,12 @@ final class FileJet
     {
         $url = "{$this->config->getPublicUrl()}/{$this->config->getStorageId()}/{$this->normalizeId($file->getIdentifier())}";
 
-        if ($this->config->isAutoMode() && $this->autoIsDisabled($file)) {
+        if ($this->config->isAutoMode() && $this->autoIsEnabled($file)) {
             $file = new File($file->getIdentifier(), $this->toAutoMutation($file));
+        }
+
+        if ($this->config->isAutoMode() && false === $this->autoIsEnabled($file)) {
+            $file = new File($file->getIdentifier(), $this->removeAutoMutation($file));
         }
 
         if ($file->getMutation() !== null) {
@@ -77,7 +81,7 @@ final class FileJet
         return preg_replace('/[^a-z0-9]/', 'x', strtolower($fileId));
     }
 
-    private function autoIsDisabled(FileInterface $file): bool
+    private function autoIsEnabled(FileInterface $file): bool
     {
         return strpos($file->getMutation() ?? '', 'auto=false') === false;
     }
@@ -85,5 +89,10 @@ final class FileJet
     private function toAutoMutation(FileInterface $file): string
     {
         return $file->getMutation() ? "{$file->getMutation()},auto" : 'auto';
+    }
+
+    private function removeAutoMutation(FileInterface $file): ?string
+    {
+        return ($mutation = preg_replace('/,?auto=false/m', '', $file->getMutation())) === '' ? null : $mutation;
     }
 }
