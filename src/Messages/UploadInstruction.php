@@ -13,17 +13,10 @@ final class UploadInstruction
     /** @var UploadFormat */
     private $uploadFormat;
 
-    public function __construct(ResponseInterface $response)
+    public function __construct(string $identifier, UploadFormat $uploadFormat)
     {
-        $data = json_decode($response->getBody()->getContents(), true);
-        $uploadFormatData = $data['uploadFormat'];
-
-        $this->identifier = $data['id'];
-        $this->uploadFormat = new UploadFormat(
-            $uploadFormatData['url'],
-            $uploadFormatData['httpMethod'],
-            $uploadFormatData['headers']
-        );
+        $this->identifier = $identifier;
+        $this->uploadFormat = $uploadFormat;
     }
 
     public function getFileIdentifier(): string
