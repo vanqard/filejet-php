@@ -6,6 +6,7 @@ namespace FileJet;
 
 use FileJet\Messages\DownloadInstruction;
 use FileJet\Messages\UploadInstruction;
+use FileJet\Messages\UploadInstructionFactory;
 use FileJet\Messages\UploadRequest;
 
 final class FileJet
@@ -49,13 +50,39 @@ final class FileJet
 
     public function uploadFile(UploadRequest $request): UploadInstruction
     {
-        return new UploadInstruction(
+        return UploadInstructionFactory::createFromResponse(
             $this->request('file.requestUpload', [
                 'contentType' => $request->getContentType(),
                 'expires' => $request->getExpires(),
-                'access' => $request->getAccess()
+                'access' => $request->getAccess(),
             ])
         );
+    }
+
+    /**
+     * @param UploadRequest[] $requests
+     *
+     * @return UploadInstruction[]
+     */
+    public function bulkUploadFiles(array $requests): array
+    {
+        $body = [];
+        foreach ($requests as $request) {
+            $body[] = [
+                'contentType' => $request->getContentType(),
+                'expires' => $request->getExpires(),
+                'access' => $request->getAccess(),
+            ];
+        }
+
+        $decodedBulkResponse = json_decode($this->request('file.requestUpload', $body)->getBody()->getContents(), true);
+        $uploadInstructions = [];
+        /** @var string[][] $instructionData */
+        foreach ($decodedBulkResponse as $instructionData) {
+            $uploadInstructions[] = UploadInstructionFactory::createFromArray($instructionData);
+        }
+
+        return $uploadInstructions;
     }
 
     public function deleteFile(string $fileId): void
