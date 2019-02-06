@@ -92,6 +92,39 @@ form.addEventListener('submit', event => {
 });
 ```
 
+### `bulkUploadFiles(UploadRequest[] $requests): UploadInstruction[]`
+
+This method is useful when you want tu upload multiple files. It works exact the same like `uploadFile()` but is more efficient than calling multiple times `uploadFile()`.
+
+The result `UploadInstruction[]` is ordered in the same order as the input `UploadRequest[]`. Default php array keys are used.
+
+```php
+use FileJet\Messages\UploadRequest;
+
+// get the upload instructions
+$uploadInstructions = $fileJet->bulkUploadFiles(
+    [
+        new UploadRequest('image/jpeg', UploadRequest::PUBLIC, 60),
+        new UploadRequest('image/jpeg', UploadRequest::PUBLIC, 60),
+        new UploadRequest('image/jpeg', UploadRequest::PUBLIC, 60),
+    ]
+);
+
+foreach ($uploadInstructions as $uploadInstruction) {
+    // you should persist this string for later usage
+    $fileIdentifier = $uploadInstruction->getFileIdentifier();
+    $uploadFormat = $uploadInstruction->getUploadFormat();
+    
+    $httpClient = new FileJet\HttpClient();
+    $httpClient->sendRequest(
+        $uploadFormat->getRequestMethod(),
+        $uploadFormat->getUri(),
+        $uploadFormat->getHeaders(),
+        $fileContent
+    );
+}
+``` 
+
 ### `getUrl(FileInterface $file): string`
 
 When you upload file with public accessibility eg. you will use `FileJet\Messages\UploadRequest::PUBLIC` while fetching upload format you can access your files via FileJet CDN. This method will generate the publicly accessible link for your files based on your configuration.
