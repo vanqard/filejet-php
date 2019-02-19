@@ -21,10 +21,13 @@
         "php-http/mock-client": "^1.0",
         "php-http/message": "^1.0",
         "guzzlehttp/psr7": "^1.0",
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^7"
     },
     "suggest": {
         "php-http/guzzle6-adapter": "HTTP client implementation which can be used with HTTPlug",
         "php-http/message": "Supports HTTP client implementation"
+    },
+    "scripts": {
+        "test": "phpunit tests"
     }
 }

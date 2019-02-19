@@ -90,6 +90,14 @@ final class FileJet
         $this->request('file.delete', ['fileId' => $this->normalizeId($fileId)]);
     }
 
+    public function toMutation(FileInterface $file, string $mutation = null) : ?string
+    {
+        $output = $file->getMutation() ?? '';
+        $separator = empty($output) || empty($mutation) ? '' : ',';
+
+        return "{$output}{$separator}{$mutation}";
+    }
+
     private function request(string $operation, array $body)
     {
         return $this->httpClient->sendRequest(
@@ -120,6 +128,8 @@ final class FileJet
 
     private function removeAutoMutation(FileInterface $file): ?string
     {
-        return ($mutation = preg_replace('/,?auto=false/m', '', $file->getMutation())) === '' ? null : $mutation;
+        $mutation = preg_replace('/,?auto=false/m', '', $file->getMutation());
+
+        return $mutation === '' ? null : $mutation;
     }
 }
