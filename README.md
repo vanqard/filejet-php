@@ -9,7 +9,7 @@ For integration with Symfony project visit [filejet/filejet-bundle](https://gith
 You can install FileJet PHP library easily via [Composer](https://getcomposer.org/):
 
 ```bash
-composer require filejet/filejet-php ^1.0
+composer require filejet/filejet-php ^2.0
 ```
 
 ## Usage
