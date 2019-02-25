@@ -25,11 +25,6 @@ class Config
         return $this->apiKey;
     }
 
-    public function getStorageId(): string
-    {
-        return $this->storageId;
-    }
-
     public function isAutoMode(): bool
     {
         return $this->autoMode;
@@ -37,11 +32,11 @@ class Config
 
     public function getStorageManagerUrl(): string
     {
-        return 'https://api.filejet.io';
+        return "https://api.filejet.io/{$this->storageId}";
     }
 
     public function getPublicUrl(): string
     {
-        return 'https://res.filejet.io';
+        return "https://{$this->storageId}.5gcdn.net";
     }
 }

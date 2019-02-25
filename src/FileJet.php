@@ -24,7 +24,7 @@ final class FileJet
 
     public function getUrl(FileInterface $file): string
     {
-        $url = "{$this->config->getPublicUrl()}/{$this->config->getStorageId()}/{$this->normalizeId($file->getIdentifier())}";
+        $url = "{$this->config->getPublicUrl()}/{$this->normalizeId($file->getIdentifier())}";
 
         if ($this->config->isAutoMode() && $this->autoIsEnabled($file)) {
             $file = new File($file->getIdentifier(), $this->toAutoMutation($file));
@@ -102,7 +102,7 @@ final class FileJet
     {
         return $this->httpClient->sendRequest(
             HttpClient::METHOD_POST,
-            "{$this->config->getStorageManagerUrl()}/{$this->config->getStorageId()}/$operation",
+            "{$this->config->getStorageManagerUrl()}/$operation",
             [
                 'Authorization' => $this->config->getApiKey(),
                 'Content-Type' => 'application/json',

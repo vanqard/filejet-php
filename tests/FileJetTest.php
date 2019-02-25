@@ -30,16 +30,16 @@ final class FileJetTest extends TestCase
     public function testUrlGeneration()
     {
         $this->assertEquals(
-            'https://res.filejet.io/storageId/identifier/auto',
+            'https://storageId.5gcdn.net/identifier/auto',
             $this->fileJet->getUrl($this->file)
         );
         $this->assertEquals(
             // FileJet normalizes file identifier internally with lowercase
-            'https://res.filejet.io/storageId/mutatedidentifier/mutation,auto',
+            'https://storageId.5gcdn.net/mutatedidentifier/mutation,auto',
             $this->fileJet->getUrl($this->mutatedFile)
         );
         $this->assertEquals(
-            'https://res.filejet.io/storageId/identifier',
+            'https://storageId.5gcdn.net/identifier',
             $this->fileJet->getUrl(
                 new \FileJet\File(
                     $this->file->getIdentifier(),
