@@ -140,7 +140,7 @@ $reportUrl = $fileJet->getUrl(
     )
 );
 
-// $reportUrl will contain 'https://res.filejet.io/yourStorageId/fileIdentifierContainingOnlyCharactersAndDigits/report.pdf'
+// $reportUrl will contain 'https://yourStorageId.5gcdn.net/fileIdentifierContainingOnlyCharactersAndDigits/report.pdf'
 
 $imageUrl = $fileJet->getUrl(
     new FileJet\File(
@@ -149,7 +149,7 @@ $imageUrl = $fileJet->getUrl(
     )
 );
 
-// $imageUrl will contain 'https://res.filejet.io/yourStorageId/fileIdentifierContainingOnlyCharactersAndDigits/sz_100_100'
+// $imageUrl will contain 'https://yourStorageId.5gcdn.net/fileIdentifierContainingOnlyCharactersAndDigits/sz_100_100'
 
 ```
 
