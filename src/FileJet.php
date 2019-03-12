@@ -133,4 +133,11 @@ final class FileJet
 
         return urlencode($url).'&sig='.hash_hmac('sha256', $url, $this->config->getSignatureSecret());
     }
+
+    /**
+     * @deprecated Please do use the FileJet/Mutation
+     */
+    public function toMutation(FileInterface $file, string $mutation = null) : ?string {
+        return $this->mutation->toMutation($file, $mutation);
+    }
 }
