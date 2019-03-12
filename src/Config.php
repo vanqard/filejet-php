@@ -10,19 +10,27 @@ class Config
     private $apiKey;
     /** @var string */
     private $storageId;
+    /** @var string */
+    private $signatureSecret;
     /** @var bool */
     private $autoMode;
 
-    public function __construct(string $apiKey, string $storageId, bool $autoMode = true)
+    public function __construct(string $apiKey, string $storageId, string $signatureSecret = null, bool $autoMode = true)
     {
         $this->apiKey = $apiKey;
         $this->storageId = $storageId;
+        $this->signatureSecret = $signatureSecret;
         $this->autoMode = $autoMode;
     }
 
     public function getApiKey(): string
     {
         return $this->apiKey;
+    }
+
+    public function getSignatureSecret(): ?string
+    {
+        return $this->signatureSecret;
     }
 
     public function isAutoMode(): bool

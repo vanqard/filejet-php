@@ -15,23 +15,26 @@ final class FileJet
     private $httpClient;
     /** @var Config */
     private $config;
+    /** @var Mutation */
+    private $mutation;
 
-    public function __construct(HttpClient $httpClient, Config $config)
+    public function __construct(HttpClient $httpClient, Config $config, Mutation $mutation)
     {
         $this->httpClient = $httpClient;
         $this->config = $config;
+        $this->mutation = $mutation;
     }
 
     public function getUrl(FileInterface $file): string
     {
         $url = "{$this->config->getPublicUrl()}/{$this->normalizeId($file->getIdentifier())}";
 
-        if ($this->config->isAutoMode() && $this->autoIsEnabled($file)) {
-            $file = new File($file->getIdentifier(), $this->toAutoMutation($file));
+        if ($this->config->isAutoMode() && $this->mutation->autoIsEnabled($file->getMutation())) {
+            $file = new File($file->getIdentifier(), $this->mutation->toAutoMutation($file->getMutation()));
         }
 
-        if ($this->config->isAutoMode() && false === $this->autoIsEnabled($file)) {
-            $file = new File($file->getIdentifier(), $this->removeAutoMutation($file));
+        if ($this->config->isAutoMode() && false === $this->mutation->autoIsEnabled($file->getMutation())) {
+            $file = new File($file->getIdentifier(), $this->mutation->removeAutoMutation($file->getMutation()));
         }
 
         if ($file->getMutation() !== null) {
@@ -46,6 +49,22 @@ final class FileJet
         return new DownloadInstruction(
             $this->request('file.privateUrl', ['fileId' => $this->normalizeId($fileId), 'expires' => $expires])
         );
+    }
+
+    public function getExternalUrl(string $url, string $mutation = '')
+    {
+
+        if ($this->config->isAutoMode() && $this->mutation->autoIsEnabled($mutation)) {
+            $mutation = $this->mutation->toAutoMutation($mutation);
+        }
+
+        if ($this->config->isAutoMode() && false === $this->mutation->autoIsEnabled($mutation)) {
+            $mutation = $this->mutation->removeAutoMutation($mutation);
+        }
+
+        if ($mutation === null) $mutation = '';
+
+        return "{$this->config->getPublicUrl()}/ext/{$mutation}?src={$this->sign($url)}";
     }
 
     public function uploadFile(UploadRequest $request): UploadInstruction
@@ -90,14 +109,6 @@ final class FileJet
         $this->request('file.delete', ['fileId' => $this->normalizeId($fileId)]);
     }
 
-    public function toMutation(FileInterface $file, string $mutation = null) : ?string
-    {
-        $output = $file->getMutation() ?? '';
-        $separator = empty($output) || empty($mutation) ? '' : ',';
-
-        return "{$output}{$separator}{$mutation}";
-    }
-
     private function request(string $operation, array $body)
     {
         return $this->httpClient->sendRequest(
@@ -116,20 +127,10 @@ final class FileJet
         return preg_replace('/[^a-z0-9]/', 'x', strtolower($fileId));
     }
 
-    private function autoIsEnabled(FileInterface $file): bool
+    private function sign(string $url): string
     {
-        return strpos($file->getMutation() ?? '', 'auto=false') === false;
-    }
+        if ($this->config->getSignatureSecret() === null) return $url;
 
-    private function toAutoMutation(FileInterface $file): string
-    {
-        return $file->getMutation() ? "{$file->getMutation()},auto" : 'auto';
-    }
-
-    private function removeAutoMutation(FileInterface $file): ?string
-    {
-        $mutation = preg_replace('/,?auto=false/m', '', $file->getMutation());
-
-        return $mutation === '' ? null : $mutation;
+        return urlencode($url).'&sig='.hash_hmac('sha256', $url, $this->config->getSignatureSecret());
     }
 }
