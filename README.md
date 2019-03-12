@@ -9,7 +9,7 @@ For integration with Symfony project visit [filejet/filejet-bundle](https://gith
 You can install FileJet PHP library easily via [Composer](https://getcomposer.org/):
 
 ```bash
-composer require filejet/filejet-php ^2.0
+composer require filejet/filejet-php ^2.3
 ```
 
 ## Usage
@@ -28,15 +28,17 @@ Setup your service:
 ```php
 $apiKey = 'your api key';
 $storageId = 'your storage id';
+$signatureSecret = 'your signature secret';
 $autoMode = true;
 
 $fileJet = new FileJet\FileJet(
     new FileJet\HttpClient(),
-    new FileJet\Config($apiKey, $storageId, $autoMode)
+    new FileJet\Config($apiKey, $storageId, $signatureSecret, $autoMode),
+    new FileJet\Mutation()
 );
 ```
 
-The `FileJet\FileJet` class provides 4 public methods which can be used for generating URL for public files (supports on the fly mutations for images), fetching signed URL for private files, generating signed instructions for uploading the file to FileJet and deleting the files from FileJet by providing the file identifier.
+The `FileJet\FileJet` class provides few public methods which can be used for generating URL for public files (supports on the fly mutations for images), fetching signed URL for private files, generating signed instructions for uploading the file to FileJet and deleting the files from FileJet by providing the file identifier.
 
 ### `uploadFile(UploadRequest $request): UploadInstruction`
 
@@ -163,6 +165,14 @@ $downloadInstruction = $fileJet->getPrivateUrl('fileIdentifierContainingOnlyChar
 // $url will contain the download link valid for 60 seconds
 $url = $downloadInstruction->getUrl();
 ```
+
+### `getExternalUrl(string $url, string $mutation)`
+
+You don't need to upload files through FileJet service in order to use all of its functionality, You can use all mutations with your own images.
+
+Simply use this method for your publicly accessible images with use of FileJet mutations. In order for this method to work you will need either add the domain from which you are serving your images to the whitelist or you can provide `signatureSecret` to your configuration.
+
+You can manage the whitelist and your `signatureSecret` at https://app.filejet.io
 
 ### `deleteFile(string $fileId): void`
 

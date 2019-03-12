@@ -55,7 +55,8 @@ final class FileJetTest extends TestCase
 
         $this->fileJet = new FileJet\FileJet(
             new \FileJet\HttpClient(),
-            new \FileJet\Config(self::API_KEY, self::STORAGE_ID, self::AUTO_MODE)
+            new \FileJet\Config(self::API_KEY, self::STORAGE_ID, null, self::AUTO_MODE),
+            new \FileJet\Mutation()
         );
 
         $this->file = new \FileJet\File('identifier');

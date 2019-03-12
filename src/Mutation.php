@@ -6,17 +6,17 @@ namespace FileJet;
 
 class Mutation
 {
-    public function autoIsEnabled(string $mutation): bool
+    public function autoIsEnabled(?string $mutation = ''): bool
     {
         return strpos($mutation ?? '', 'auto=false') === false;
     }
 
-    public function toAutoMutation(string $mutation): string
+    public function toAutoMutation(?string $mutation = ''): string
     {
         return $mutation ? "{$mutation},auto" : 'auto';
     }
 
-    public function removeAutoMutation(string $mutation): ?string
+    public function removeAutoMutation(?string $mutation = ''): ?string
     {
         $output = preg_replace('/,?auto=false|auto=false,?/m', '', $mutation);
 

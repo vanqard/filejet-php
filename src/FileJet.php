@@ -53,7 +53,6 @@ final class FileJet
 
     public function getExternalUrl(string $url, string $mutation = '')
     {
-
         if ($this->config->isAutoMode() && $this->mutation->autoIsEnabled($mutation)) {
             $mutation = $this->mutation->toAutoMutation($mutation);
         }
