@@ -10,13 +10,16 @@ class Config
     private $apiKey;
     /** @var string */
     private $storageId;
+    /** @var string */
+    private $signatureSecret;
     /** @var bool */
     private $autoMode;
 
-    public function __construct(string $apiKey, string $storageId, bool $autoMode = true)
+    public function __construct(string $apiKey, string $storageId, string $signatureSecret = null, bool $autoMode = true)
     {
         $this->apiKey = $apiKey;
         $this->storageId = $storageId;
+        $this->signatureSecret = $signatureSecret;
         $this->autoMode = $autoMode;
     }
 
@@ -25,9 +28,9 @@ class Config
         return $this->apiKey;
     }
 
-    public function getStorageId(): string
+    public function getSignatureSecret(): ?string
     {
-        return $this->storageId;
+        return $this->signatureSecret;
     }
 
     public function isAutoMode(): bool
@@ -37,11 +40,11 @@ class Config
 
     public function getStorageManagerUrl(): string
     {
-        return 'https://api.filejet.io';
+        return "https://api.filejet.io/{$this->storageId}";
     }
 
     public function getPublicUrl(): string
     {
-        return 'https://res.filejet.io';
+        return "https://{$this->storageId}.5gcdn.net";
     }
 }

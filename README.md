@@ -9,7 +9,7 @@ For integration with Symfony project visit [filejet/filejet-bundle](https://gith
 You can install FileJet PHP library easily via [Composer](https://getcomposer.org/):
 
 ```bash
-composer require filejet/filejet-php ^1.0
+composer require filejet/filejet-php ^2.3
 ```
 
 ## Usage
@@ -28,15 +28,17 @@ Setup your service:
 ```php
 $apiKey = 'your api key';
 $storageId = 'your storage id';
+$signatureSecret = 'your signature secret';
 $autoMode = true;
 
 $fileJet = new FileJet\FileJet(
     new FileJet\HttpClient(),
-    new FileJet\Config($apiKey, $storageId, $autoMode)
+    new FileJet\Config($apiKey, $storageId, $signatureSecret, $autoMode),
+    new FileJet\Mutation()
 );
 ```
 
-The `FileJet\FileJet` class provides 4 public methods which can be used for generating URL for public files (supports on the fly mutations for images), fetching signed URL for private files, generating signed instructions for uploading the file to FileJet and deleting the files from FileJet by providing the file identifier.
+The `FileJet\FileJet` class provides few public methods which can be used for generating URL for public files (supports on the fly mutations for images), fetching signed URL for private files, generating signed instructions for uploading the file to FileJet and deleting the files from FileJet by providing the file identifier.
 
 ### `uploadFile(UploadRequest $request): UploadInstruction`
 
@@ -92,6 +94,39 @@ form.addEventListener('submit', event => {
 });
 ```
 
+### `bulkUploadFiles(UploadRequest[] $requests): UploadInstruction[]`
+
+This method is useful when you want tu upload multiple files. It works exact the same like `uploadFile()` but is more efficient than calling multiple times `uploadFile()`.
+
+The result `UploadInstruction[]` is ordered in the same order as the input `UploadRequest[]`. Default php array keys are used.
+
+```php
+use FileJet\Messages\UploadRequest;
+
+// get the upload instructions
+$uploadInstructions = $fileJet->bulkUploadFiles(
+    [
+        new UploadRequest('image/jpeg', UploadRequest::PUBLIC, 60),
+        new UploadRequest('image/jpeg', UploadRequest::PUBLIC, 60),
+        new UploadRequest('image/jpeg', UploadRequest::PUBLIC, 60),
+    ]
+);
+
+foreach ($uploadInstructions as $uploadInstruction) {
+    // you should persist this string for later usage
+    $fileIdentifier = $uploadInstruction->getFileIdentifier();
+    $uploadFormat = $uploadInstruction->getUploadFormat();
+    
+    $httpClient = new FileJet\HttpClient();
+    $httpClient->sendRequest(
+        $uploadFormat->getRequestMethod(),
+        $uploadFormat->getUri(),
+        $uploadFormat->getHeaders(),
+        $fileContent
+    );
+}
+``` 
+
 ### `getUrl(FileInterface $file): string`
 
 When you upload file with public accessibility eg. you will use `FileJet\Messages\UploadRequest::PUBLIC` while fetching upload format you can access your files via FileJet CDN. This method will generate the publicly accessible link for your files based on your configuration.
@@ -107,7 +142,7 @@ $reportUrl = $fileJet->getUrl(
     )
 );
 
-// $reportUrl will contain 'https://res.filejet.io/yourStorageId/fileIdentifierContainingOnlyCharactersAndDigits/report.pdf'
+// $reportUrl will contain 'https://yourStorageId.5gcdn.net/fileIdentifierContainingOnlyCharactersAndDigits/report.pdf'
 
 $imageUrl = $fileJet->getUrl(
     new FileJet\File(
@@ -116,7 +151,7 @@ $imageUrl = $fileJet->getUrl(
     )
 );
 
-// $imageUrl will contain 'https://res.filejet.io/yourStorageId/fileIdentifierContainingOnlyCharactersAndDigits/sz_100_100'
+// $imageUrl will contain 'https://yourStorageId.5gcdn.net/fileIdentifierContainingOnlyCharactersAndDigits/sz_100_100'
 
 ```
 
@@ -130,6 +165,14 @@ $downloadInstruction = $fileJet->getPrivateUrl('fileIdentifierContainingOnlyChar
 // $url will contain the download link valid for 60 seconds
 $url = $downloadInstruction->getUrl();
 ```
+
+### `getExternalUrl(string $url, string $mutation)`
+
+You don't need to upload files through FileJet service in order to use all of its functionality, You can use all mutations with your own images.
+
+Simply use this method for your publicly accessible images with use of FileJet mutations. In order for this method to work you will need either add the domain from which you are serving your images to the whitelist or you can provide `signatureSecret` to your configuration.
+
+You can manage the whitelist and your `signatureSecret` at https://app.filejet.io
 
 ### `deleteFile(string $fileId): void`
 
