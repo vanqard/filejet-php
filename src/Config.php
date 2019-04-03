@@ -17,13 +17,13 @@ class Config
     /** @var bool */
     private $autoMode;
 
-    public function __construct(string $apiKey, string $storageId, string $baseUrl = null, string $signatureSecret = null, bool $autoMode = true)
+    public function __construct(string $apiKey, string $storageId, string $signatureSecret = null, bool $autoMode = true, string $baseUrl = null)
     {
         $this->apiKey = $apiKey;
         $this->storageId = $storageId;
-        $this->baseUrl = $baseUrl;
         $this->signatureSecret = $signatureSecret;
         $this->autoMode = $autoMode;
+        $this->baseUrl = $baseUrl;
     }
 
     public function getApiKey(): string
