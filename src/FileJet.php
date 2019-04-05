@@ -44,22 +44,23 @@ final class FileJet
         return $url;
     }
 
-    public function getPrivateUrl(string $fileId, int $expires): DownloadInstruction
+    public function getPrivateUrl(string $fileId, int $expires, string $mutation = ''): DownloadInstruction
     {
+        $requestParameters = ['fileId' => $this->normalizeId($fileId), 'expires' => $expires];
+
+        $mutation = $this->resolveAutoMutation($mutation);
+        if ($mutation) {
+            $requestParameters['mutation'] = $mutation;
+        }
+
         return new DownloadInstruction(
-            $this->request('file.privateUrl', ['fileId' => $this->normalizeId($fileId), 'expires' => $expires])
+            $this->request('file.privateUrl', $requestParameters)
         );
     }
 
     public function getExternalUrl(string $url, string $mutation = '')
     {
-        if ($this->config->isAutoMode() && $this->mutation->autoIsEnabled($mutation)) {
-            $mutation = $this->mutation->toAutoMutation($mutation);
-        }
-
-        if ($this->config->isAutoMode() && false === $this->mutation->autoIsEnabled($mutation)) {
-            $mutation = $this->mutation->removeAutoMutation($mutation);
-        }
+        $mutation = $this->resolveAutoMutation($mutation);
 
         if ($mutation === null) $mutation = '';
 
@@ -138,5 +139,18 @@ final class FileJet
      */
     public function toMutation(FileInterface $file, string $mutation = null) : ?string {
         return $this->mutation->toMutation($file, $mutation);
+    }
+
+    private function resolveAutoMutation(string $mutation = ''): ?string
+    {
+        if ($this->config->isAutoMode() && $this->mutation->autoIsEnabled($mutation)) {
+            $mutation = $this->mutation->toAutoMutation($mutation);
+        }
+
+        if ($this->config->isAutoMode() && false === $this->mutation->autoIsEnabled($mutation)) {
+            $mutation = $this->mutation->removeAutoMutation($mutation);
+        }
+
+        return $mutation;
     }
 }
