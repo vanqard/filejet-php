@@ -6,6 +6,7 @@ namespace FileJet;
 
 use FileJet\Messages\DownloadInstruction;
 use FileJet\Messages\UploadInstruction;
+use FileJet\Messages\UploadInstructionFactory;
 use FileJet\Messages\UploadRequest;
 
 final class FileJet
@@ -14,23 +15,26 @@ final class FileJet
     private $httpClient;
     /** @var Config */
     private $config;
+    /** @var Mutation */
+    private $mutation;
 
-    public function __construct(HttpClient $httpClient, Config $config)
+    public function __construct(HttpClient $httpClient, Config $config, Mutation $mutation)
     {
         $this->httpClient = $httpClient;
         $this->config = $config;
+        $this->mutation = $mutation;
     }
 
     public function getUrl(FileInterface $file): string
     {
-        $url = "{$this->config->getPublicUrl()}/{$this->config->getStorageId()}/{$this->normalizeId($file->getIdentifier())}";
+        $url = "{$this->config->getPublicUrl()}/{$this->normalizeId($file->getIdentifier())}";
 
-        if ($this->config->isAutoMode() && $this->autoIsEnabled($file)) {
-            $file = new File($file->getIdentifier(), $this->toAutoMutation($file));
+        if ($this->config->isAutoMode() && $this->mutation->autoIsEnabled($file->getMutation())) {
+            $file = new File($file->getIdentifier(), $this->mutation->toAutoMutation($file->getMutation()));
         }
 
-        if ($this->config->isAutoMode() && false === $this->autoIsEnabled($file)) {
-            $file = new File($file->getIdentifier(), $this->removeAutoMutation($file));
+        if ($this->config->isAutoMode() && false === $this->mutation->autoIsEnabled($file->getMutation())) {
+            $file = new File($file->getIdentifier(), $this->mutation->removeAutoMutation($file->getMutation()));
         }
 
         if ($file->getMutation() !== null) {
@@ -47,15 +51,56 @@ final class FileJet
         );
     }
 
+    public function getExternalUrl(string $url, string $mutation = '')
+    {
+        if ($this->config->isAutoMode() && $this->mutation->autoIsEnabled($mutation)) {
+            $mutation = $this->mutation->toAutoMutation($mutation);
+        }
+
+        if ($this->config->isAutoMode() && false === $this->mutation->autoIsEnabled($mutation)) {
+            $mutation = $this->mutation->removeAutoMutation($mutation);
+        }
+
+        if ($mutation === null) $mutation = '';
+
+        return "{$this->config->getPublicUrl()}/ext/{$mutation}?src={$this->sign($url)}";
+    }
+
     public function uploadFile(UploadRequest $request): UploadInstruction
     {
-        return new UploadInstruction(
+        return UploadInstructionFactory::createFromResponse(
             $this->request('file.requestUpload', [
                 'contentType' => $request->getContentType(),
                 'expires' => $request->getExpires(),
-                'access' => $request->getAccess()
+                'access' => $request->getAccess(),
             ])
         );
+    }
+
+    /**
+     * @param UploadRequest[] $requests
+     *
+     * @return UploadInstruction[]
+     */
+    public function bulkUploadFiles(array $requests): array
+    {
+        $body = [];
+        foreach ($requests as $request) {
+            $body[] = [
+                'contentType' => $request->getContentType(),
+                'expires' => $request->getExpires(),
+                'access' => $request->getAccess(),
+            ];
+        }
+
+        $decodedBulkResponse = json_decode($this->request('file.requestUpload', $body)->getBody()->getContents(), true);
+        $uploadInstructions = [];
+        /** @var string[][] $instructionData */
+        foreach ($decodedBulkResponse as $instructionData) {
+            $uploadInstructions[] = UploadInstructionFactory::createFromArray($instructionData);
+        }
+
+        return $uploadInstructions;
     }
 
     public function deleteFile(string $fileId): void
@@ -67,7 +112,7 @@ final class FileJet
     {
         return $this->httpClient->sendRequest(
             HttpClient::METHOD_POST,
-            "{$this->config->getStorageManagerUrl()}/{$this->config->getStorageId()}/$operation",
+            "{$this->config->getStorageManagerUrl()}/$operation",
             [
                 'Authorization' => $this->config->getApiKey(),
                 'Content-Type' => 'application/json',
@@ -81,18 +126,17 @@ final class FileJet
         return preg_replace('/[^a-z0-9]/', 'x', strtolower($fileId));
     }
 
-    private function autoIsEnabled(FileInterface $file): bool
+    private function sign(string $url): string
     {
-        return strpos($file->getMutation() ?? '', 'auto=false') === false;
+        if ($this->config->getSignatureSecret() === null) return $url;
+
+        return urlencode($url).'&sig='.hash_hmac('sha256', $url, $this->config->getSignatureSecret());
     }
 
-    private function toAutoMutation(FileInterface $file): string
-    {
-        return $file->getMutation() ? "{$file->getMutation()},auto" : 'auto';
-    }
-
-    private function removeAutoMutation(FileInterface $file): ?string
-    {
-        return ($mutation = preg_replace('/,?auto=false/m', '', $file->getMutation())) === '' ? null : $mutation;
+    /**
+     * @deprecated Please do use the FileJet/Mutation
+     */
+    public function toMutation(FileInterface $file, string $mutation = null) : ?string {
+        return $this->mutation->toMutation($file, $mutation);
     }
 }
