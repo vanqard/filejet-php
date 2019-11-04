@@ -17,12 +17,15 @@ final class UploadRequest
     private $access;
     /** @var int */
     private $expires;
+    /** @var string|null */
+    private $filename;
 
-    public function __construct(string $contentType, string $access = self::PUBLIC_ACCESS, int $expires = self::DEFAULT_TTL_IN_SECONDS)
+    public function __construct(string $contentType, string $access = self::PUBLIC_ACCESS, int $expires = self::DEFAULT_TTL_IN_SECONDS, string $filename = null)
     {
         $this->contentType = $contentType;
         $this->access = $access;
         $this->expires = $expires;
+        $this->filename = $filename;
     }
 
     public function getContentType(): string
@@ -38,5 +41,10 @@ final class UploadRequest
     public function getExpires(): int
     {
         return $this->expires;
+    }
+
+    public function getFilename(): ?string
+    {
+        return $this->filename;
     }
 }

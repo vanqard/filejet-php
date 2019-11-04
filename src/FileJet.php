@@ -74,6 +74,7 @@ final class FileJet
                 'contentType' => $request->getContentType(),
                 'expires' => $request->getExpires(),
                 'access' => $request->getAccess(),
+                'filename' => $request->getFilename(),
             ])
         );
     }
@@ -91,6 +92,7 @@ final class FileJet
                 'contentType' => $request->getContentType(),
                 'expires' => $request->getExpires(),
                 'access' => $request->getAccess(),
+                'filename' => $request->getFilename(),
             ];
         }
 
