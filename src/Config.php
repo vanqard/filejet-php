@@ -16,14 +16,23 @@ class Config
     private $signatureSecret;
     /** @var bool */
     private $autoMode;
+    /** @var string */
+    private $customDomain;
 
-    public function __construct(string $apiKey, string $storageId, string $signatureSecret = null, bool $autoMode = true, string $baseUrl = null)
-    {
+    public function __construct(
+        string $apiKey,
+        string $storageId,
+        string $signatureSecret = null,
+        bool $autoMode = true,
+        string $baseUrl = null,
+        string $customDomain = null
+    ) {
         $this->apiKey = $apiKey;
         $this->storageId = $storageId;
         $this->signatureSecret = $signatureSecret;
         $this->autoMode = $autoMode;
         $this->baseUrl = $baseUrl;
+        $this->customDomain = $customDomain;
     }
 
     public function getApiKey(): string
@@ -53,6 +62,13 @@ class Config
 
     public function getPublicUrl(): string
     {
+        if ($this->customDomain) return "https://{$this->customDomain}";
+
         return "https://{$this->storageId}.5gcdn.net";
+    }
+
+    public function getCustomDomain(): string
+    {
+        return $this->customDomain;
     }
 }
