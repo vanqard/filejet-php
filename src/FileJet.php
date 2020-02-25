@@ -48,6 +48,11 @@ final class FileJet
     {
         $requestParameters = ['fileId' => $this->normalizeId($fileId), 'expires' => $expires];
 
+        $customDomain = $this->config->getCustomDomain();
+        if ($customDomain) {
+            $requestParameters['customDomain'] = $customDomain;
+        }
+
         $mutation = $this->resolveAutoMutation($mutation);
         if ($mutation) {
             $requestParameters['mutation'] = $mutation;
