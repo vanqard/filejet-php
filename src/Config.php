@@ -67,7 +67,7 @@ class Config
         return "https://{$this->storageId}.5gcdn.net";
     }
 
-    public function getCustomDomain(): string
+    public function getCustomDomain(): ?string
     {
         return $this->customDomain;
     }
