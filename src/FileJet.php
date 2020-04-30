@@ -46,6 +46,23 @@ final class FileJet
 
     public function getPrivateUrl(string $fileId, int $expires, string $mutation = ''): DownloadInstruction
     {
+        return new DownloadInstruction(
+            $this->request('file.privateUrl', $this->getRequestParameters($fileId, $expires, $mutation))
+        );
+    }
+
+    public function getDetentionUrl(string $fileId, int $expires, string $mutation = ''): DownloadInstruction
+    {
+        return new DownloadInstruction(
+            $this->request('file.detentionUrl', $this->getRequestParameters($fileId, $expires, $mutation))
+        );
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getRequestParameters(string $fileId, int $expires, string $mutation = ''): array
+    {
         $requestParameters = ['fileId' => $this->normalizeId($fileId), 'expires' => $expires];
 
         $customDomain = $this->config->getCustomDomain();
@@ -58,9 +75,7 @@ final class FileJet
             $requestParameters['mutation'] = $mutation;
         }
 
-        return new DownloadInstruction(
-            $this->request('file.privateUrl', $requestParameters)
-        );
+        return $requestParameters;
     }
 
     public function getExternalUrl(string $url, string $mutation = '')
