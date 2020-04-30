@@ -72,6 +72,25 @@ final class FileJet
         return "{$this->config->getPublicUrl()}/ext/{$mutation}?src={$this->sign($url)}";
     }
 
+    public function getDetentionUrl(string $fileId, int $expires, string $mutation = ''): DownloadInstruction
+    {
+        $requestParameters = ['fileId' => $this->normalizeId($fileId), 'expires' => $expires];
+
+        $customDomain = $this->config->getCustomDomain();
+        if ($customDomain) {
+            $requestParameters['customDomain'] = $customDomain;
+        }
+
+        $mutation = $this->resolveAutoMutation($mutation);
+        if ($mutation) {
+            $requestParameters['mutation'] = $mutation;
+        }
+
+        return new DownloadInstruction(
+            $this->request('file.detentionUrl', $requestParameters)
+        );
+    }
+
     public function uploadFile(UploadRequest $request): UploadInstruction
     {
         return UploadInstructionFactory::createFromResponse(
