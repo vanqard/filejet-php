@@ -53,7 +53,7 @@ use FileJet\Messages\UploadRequest;
 
 // get the upload instructions
 $uploadInstruction = $fileJet->uploadFile(
-    new UploadRequest('image/jpeg', UploadRequest::PUBLIC, 60)
+    new UploadRequest('image/jpeg', UploadRequest::PUBLIC_ACCESS, 60)
 );
 
 // you should persist this string for later usage
@@ -106,9 +106,9 @@ use FileJet\Messages\UploadRequest;
 // get the upload instructions
 $uploadInstructions = $fileJet->bulkUploadFiles(
     [
-        new UploadRequest('image/jpeg', UploadRequest::PUBLIC, 60),
-        new UploadRequest('image/jpeg', UploadRequest::PUBLIC, 60),
-        new UploadRequest('image/jpeg', UploadRequest::PUBLIC, 60),
+        new UploadRequest('image/jpeg', UploadRequest::PUBLIC_ACCESS, 60),
+        new UploadRequest('image/jpeg', UploadRequest::PUBLIC_ACCESS, 60),
+        new UploadRequest('image/jpeg', UploadRequest::PUBLIC_ACCESS, 60),
     ]
 );
 
@@ -129,7 +129,7 @@ foreach ($uploadInstructions as $uploadInstruction) {
 
 ### `getUrl(FileInterface $file): string`
 
-When you upload file with public accessibility eg. you will use `FileJet\Messages\UploadRequest::PUBLIC` while fetching upload format you can access your files via FileJet CDN. This method will generate the publicly accessible link for your files based on your configuration.
+When you upload file with public accessibility eg. you will use `FileJet\Messages\UploadRequest::PUBLIC_ACCESS` while fetching upload format you can access your files via FileJet CDN. This method will generate the publicly accessible link for your files based on your configuration.
 
 Method accepts only argument the object which describes your file. You can use this method with `FileJet\File` object which implements `FileJet\FileInterface`. The object contains file identifier provided by `uploadFile()` method. If you are trying to get link for image you can optionally provide mutation string ([see documentation](https://github.com/filejet/filejet-php/blob/master/mutators.md)). For SEO purposes you can provide the optional third argument which will append the file URL with your custom name.
 
