@@ -12,13 +12,13 @@ final class UploadRequest
     public const PRIVATE_ACCESS = 'private';
 
     /** @var string */
-    private $contentType;
+    private string $contentType;
     /** @var string */
-    private $access;
+    private string $access;
     /** @var int */
-    private $expires;
+    private int $expires;
     /** @var string|null */
-    private $filename;
+    private string|null $filename = null;
 
     public function __construct(string $contentType, string $access = self::PUBLIC_ACCESS, int $expires = self::DEFAULT_TTL_IN_SECONDS, string $filename = null)
     {

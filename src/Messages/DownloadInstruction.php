@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 final class DownloadInstruction
 {
     /** @var string */
-    private $url;
+    private string $url;
 
     public function __construct(ResponseInterface $response)
     {

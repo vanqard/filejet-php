@@ -7,9 +7,9 @@ namespace FileJet;
 final class File implements FileInterface
 {
     /** @var string */
-    private $identifier;
+    private string $identifier;
     /** @var null|string */
-    private $mutation;
+    private ?string $mutation;
 
     public function __construct(string $identifier, string $mutation = null)
     {

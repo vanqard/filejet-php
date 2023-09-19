@@ -7,16 +7,18 @@ namespace FileJet;
 use FileJet\Messages\DownloadInstruction;
 use FileJet\Messages\UploadInstruction;
 use FileJet\Messages\UploadInstructionFactory;
-use FileJet\Messages\UploadRequest;
+    use FileJet\Messages\UploadRequest;
 
 final class FileJet
 {
     /** @var HttpClient */
-    private $httpClient;
+    private HttpClient $httpClient;
+
     /** @var Config */
-    private $config;
+    private Config $config;
+
     /** @var Mutation */
-    private $mutation;
+    private Mutation $mutation;
 
     public function __construct(HttpClient $httpClient, Config $config, Mutation $mutation)
     {
