@@ -8,12 +8,12 @@ use Psr\Http\Message\ResponseInterface;
 
 final class UploadInstruction
 {
-    /** @var string */
-    private $identifier;
+    /** @var string|array */
+    private string|array $identifier;
     /** @var UploadFormat */
-    private $uploadFormat;
+    private UploadFormat $uploadFormat;
 
-    public function __construct(string $identifier, UploadFormat $uploadFormat)
+    public function __construct(string|array $identifier, UploadFormat $uploadFormat)
     {
         $this->identifier = $identifier;
         $this->uploadFormat = $uploadFormat;

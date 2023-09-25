@@ -7,17 +7,17 @@ namespace FileJet;
 class Config
 {
     /** @var string */
-    private $apiKey;
+    private string $apiKey;
     /** @var string */
-    private $storageId;
-    /** @var string */
-    private $baseUrl;
-    /** @var string */
-    private $signatureSecret;
+    private string $storageId;
+    /** @var string|null */
+    private ?string $signatureSecret = null;
     /** @var bool */
-    private $autoMode;
-    /** @var string */
-    private $customDomain;
+    private bool $autoMode = true;
+    /** @var string|null */
+    private ?string $baseUrl = null;
+    /** @var string|null */
+    private ?string $customDomain = null;
 
     public function __construct(
         string $apiKey,

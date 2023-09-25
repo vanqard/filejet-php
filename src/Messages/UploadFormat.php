@@ -7,11 +7,11 @@ namespace FileJet\Messages;
 final class UploadFormat
 {
     /** @var string */
-    private $uri;
+    private string $uri;
     /** @var string */
-    private $requestMethod;
+    private string $requestMethod;
     /** @var array */
-    private $headers;
+    private array $headers;
 
     public function __construct(string $uri, string $requestMethod, array $headers = [])
     {

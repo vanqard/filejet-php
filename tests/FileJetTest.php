@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use FileJet\FileJet;
+use FileJet\File;
+use FileJet\HttpClient;
+use FileJet\Config;
+use FileJet\Mutation;
+use FileJet\FileInterface;
 
 final class FileJetTest extends TestCase
 {
@@ -10,21 +16,25 @@ final class FileJetTest extends TestCase
     private const STORAGE_ID = 'storageId';
     private const AUTO_MODE = true;
 
-    /** @var \FileJet\FileJet */
-    private $fileJet;
+    /** @var FileJet */
+    private FileJet $fileJet;
 
-    /** @var \FileJet\FileInterface */
-    private $file;
-    /** @var \FileJet\FileInterface */
-    private $mutatedFile;
+    /** @var FileInterface */
+    private FileInterface $file;
+
+    /** @var FileInterface */
+    private FileInterface $mutatedFile;
+
+    /** @var Mutation */
+    private Mutation $mutationInstance;
 
     public function testConversionToMutation(): void
     {
         $mutation = 'newMutation';
-        $this->assertEquals('newMutation', $this->fileJet->toMutation($this->file, $mutation));
-        $this->assertEquals('mutation,newMutation', $this->fileJet->toMutation($this->mutatedFile, $mutation));
-        $this->assertEquals('', $this->fileJet->toMutation($this->file));
-        $this->assertEquals('mutation', $this->fileJet->toMutation($this->mutatedFile));
+        $this->assertEquals('newMutation', $this->mutationInstance->toMutation($this->file, $mutation));
+        $this->assertEquals('mutation,newMutation', $this->mutationInstance->toMutation($this->mutatedFile, $mutation));
+        $this->assertEquals('', $this->mutationInstance->toMutation($this->file));
+        $this->assertEquals('mutation', $this->mutationInstance->toMutation($this->mutatedFile));
     }
 
     public function testUrlGeneration()
@@ -43,23 +53,22 @@ final class FileJetTest extends TestCase
             $this->fileJet->getUrl(
                 new \FileJet\File(
                     $this->file->getIdentifier(),
-                    $this->fileJet->toMutation($this->file, 'auto=false')
+                    $this->mutationInstance->toMutation($this->file, 'auto=false')
                 )
             )
         );
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        \Http\Discovery\HttpClientDiscovery::prependStrategy(\Http\Discovery\Strategy\MockClientStrategy::class);
-
-        $this->fileJet = new FileJet\FileJet(
-            new \FileJet\HttpClient(),
-            new \FileJet\Config(self::API_KEY, self::STORAGE_ID, null, self::AUTO_MODE),
-            new \FileJet\Mutation()
+        $this->mutationInstance = new Mutation();
+        $this->fileJet = new FileJet(
+            new HttpClient(),
+            new Config(self::API_KEY, self::STORAGE_ID, null, self::AUTO_MODE),
+            $this->mutationInstance
         );
 
-        $this->file = new \FileJet\File('identifier');
-        $this->mutatedFile = new \FileJet\File('mutatedIdentifier', 'mutation');
+        $this->file = new File('identifier');
+        $this->mutatedFile = new File('mutatedIdentifier', 'mutation');
     }
 }
