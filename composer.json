@@ -1,5 +1,5 @@
 {
-    "name": "filejet/filejet-php",
+    "name": "vanqard/filejet-php",
     "license": "MIT",
     "type": "library",
     "description": "PHP library for communicating with FileJet service. FileJet handles upload of files to remote storage and is capable of simple image mutations.",
