@@ -7,7 +7,8 @@ namespace FileJet;
 use FileJet\Messages\DownloadInstruction;
 use FileJet\Messages\UploadInstruction;
 use FileJet\Messages\UploadInstructionFactory;
-    use FileJet\Messages\UploadRequest;
+use FileJet\Messages\UploadRequest;
+use Psr\Http\Message\ResponseInterface;
 
 final class FileJet
 {
@@ -80,7 +81,7 @@ final class FileJet
         return $requestParameters;
     }
 
-    public function getExternalUrl(string $url, string $mutation = '')
+    public function getExternalUrl(string $url, string $mutation = ''): string
     {
         $mutation = $this->resolveAutoMutation($mutation);
 
@@ -128,12 +129,13 @@ final class FileJet
         return $uploadInstructions;
     }
 
-    public function deleteFile(string $fileId): void
+    public function deleteFile(string $fileId): int
     {
-        $this->request('file.delete', ['fileId' => $this->normalizeId($fileId)]);
+        $response = $this->request('file.delete', ['fileId' => $this->normalizeId($fileId)]);
+        return $response->getStatusCode();
     }
 
-    private function request(string $operation, array $body)
+    private function request(string $operation, array $body): ResponseInterface
     {
         return $this->httpClient->sendRequest(
             HttpClient::METHOD_POST,
